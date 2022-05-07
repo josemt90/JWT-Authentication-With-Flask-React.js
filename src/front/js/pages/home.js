@@ -1,26 +1,39 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import rigoImageUrl from "../../img/rigo-baby.jpg";
 import "../../styles/home.css";
 
 export const Home = () => {
-	const { store, actions } = useContext(Context);
+  const { store, actions } = useContext(Context);
+  const [data, setData] = useState({});
 
-	return (
-		<div className="text-center mt-5">
-			<h1>Hello Rigo!!</h1>
-			<p>
-				<img src={rigoImageUrl} />
-			</p>
-			<div className="alert alert-info">
-				{store.message || "Loading message from the backend (make sure your python backend is running)..."}
-			</div>
-			<p>
-				This boilerplate comes with lots of documentation:{" "}
-				<a href="https://github.com/4GeeksAcademy/react-flask-hello/tree/95e0540bd1422249c3004f149825285118594325/docs">
-					Read documentation
-				</a>
-			</p>
-		</div>
-	);
+  useEffect(() => {
+    actions.getRoles();
+  }, []);
+
+  const handleChange = (event) => {
+    setData({ ...data, [event.target.name]: event.target.value });
+  };
+
+  const handleSubmit = () => {
+    fetch(process.env.BACKEND_URL + "/api/user", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((resp) => resp.json());
+  };
+
+  return (
+    <div className="container">
+      <div className="text-center mt-5">
+        <h1 className="mb-3">JWT Authentication With Flask & React.js</h1>
+        <img
+          src="https://www.osi.es/sites/default/files/images/imagen-decorativa-infografia-cuentas-usuario.png"
+          class="img-fluid"
+          alt="..."
+        />
+      </div>
+    </div>
+  );
 };
